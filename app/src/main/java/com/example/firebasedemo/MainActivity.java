@@ -13,7 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity implements ValueEventListener {
-    Place city = new Place("Irkutsk", 103.6, 53.4);
+    Place city = new Place("Sochi", 80, 70);
     DatabaseReference dbRef;
 
     @Override
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements ValueEventListene
 
         // получаем ссылку на облачную БД
         dbRef = FirebaseDatabase.getInstance().getReference();
-        dbRef.child("myplace").addValueEventListener(this);
+        dbRef.child("myplace").addValueEventListener(this); // следим за изменением данных
         changePlace(city);
 
 
@@ -31,16 +31,26 @@ public class MainActivity extends AppCompatActivity implements ValueEventListene
 
     public void changePlace(Place p) {
         dbRef.child("myplace").setValue(p);
-        dbRef.child("myplace").push().setValue(p);
+        //dbRef.child("myplace").child("anotherplace").setValue(p);
+
 
     }
 
 
     @Override
     public void onDataChange(@NonNull DataSnapshot snapshot) {
-       Place place = snapshot.getValue(Place.class);
-       Log.d("mytag", "key: " + snapshot.getKey());
-       Log.d("mytag", "place: " + place);
+        Place place = snapshot.getValue(Place.class);
+        
+        Log.d("mytag", "place: " + place);
+        /*
+       for (DataSnapshot s: snapshot.getChildren() ) {
+           Log.d("mytag", "key: " + s.getKey());
+           Place place = s.getValue(Place.class);
+           Log.d("mytag", "place: " + place);
+       }
+
+         */
+
     }
 
     @Override
