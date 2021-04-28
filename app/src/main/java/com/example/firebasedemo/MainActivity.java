@@ -3,9 +3,14 @@ package com.example.firebasedemo;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -16,22 +21,28 @@ public class MainActivity extends AppCompatActivity implements ValueEventListene
     Place city = new Place("Beijing", 80, 70);
     DatabaseReference dbRef;
     final String CHILD = "myplace123";
+    final int RC_SIGN_IN = 123;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         // получаем ссылку на облачную БД
         dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.child(CHILD).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                /* TODO: fix
                 Log.d("mytag", "count: " + snapshot.getChildrenCount());
                 for (DataSnapshot s: snapshot.getChildren()) {
                     Place p = s.getValue(Place.class);
                     Log.d("mytag", "place: " + p);
                 }
+
+                 */
                 
             }
 
@@ -78,5 +89,15 @@ public class MainActivity extends AppCompatActivity implements ValueEventListene
     @Override
     public void onCancelled(@NonNull DatabaseError error) {
 
+    }
+    public void signIn(View v) {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 }
